@@ -1,0 +1,30 @@
+{
+  "name": "product_management_system",
+  "version": "1.0.0",
+  "description": "A server application to manage inverntory of products using node and swagger documentation",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anonymous3105/ProductManagementSystem.git"
+  },
+  "keywords": [
+    "Product",
+    "Management",
+    "node",
+    "swagger",
+    "schema"
+  ],
+  "author": "Abhijeet Ambadekar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anonymous3105/ProductManagementSystem/issues"
+  },
+  "homepage": "https://github.com/Anonymous3105/ProductManagementSystem#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4"
+  }
+}
