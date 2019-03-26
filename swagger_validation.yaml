@@ -1,0 +1,533 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Product Management System
+  description: A production management system validation file
+schemes:
+  - http
+host: localhost:3000
+basePath: /
+
+tags:
+  - name: "Home"
+    description: "Home page"
+  - name: "Product"
+    description: "APIs on products"
+  - name: "Category"
+    description: "APIs on categories"
+
+paths:
+  /:
+    get:
+      tags:
+        - Home
+      summary: Home page
+      description: Get everything on the home page
+      produces: 
+        - application/json
+      responses:
+        200:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              categories:
+                type: object
+              products:
+                type: object
+  /products/findByID/{prod_id}:
+    get:
+      tags: 
+        - Product
+      summary: "Get a product object from it ID"
+      parameters:
+        - name: prod_id
+          type: number
+          format: int64
+          minimum: 1
+          in: path
+          required: true
+          description: The ID of the product
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Getting a product object of the given id
+          schema:
+            $ref: '#/definitions/ResponseProduct'
+        '404':
+          description: The specified product ID is not found
+  
+  /products/findByName:
+    get:
+      tags:
+        - Product
+      summary: "Get all the products that match the specified name keyword"
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+          description: The keyword that can occur in the name of a product
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Getting all the products that have the specified keyword in their name
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResponseProduct'
+        '404':
+          description: The specified keywords match no products
+
+  /products/post:
+    post:
+      tags:
+        - Product
+      summary: Add a new product to the store listing
+      consumes:
+        - "application/json"
+      parameters:
+        - name: product
+          in: body
+          description: Product JSON object
+          required: true
+          schema:
+            $ref: "#/definitions/RequestProduct"
+
+      responses:
+        '200':
+          description: Succesfully adding the product
+          schema:
+            type: object
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              id: 
+                type: number
+                description: ID of the created product
+              url:
+                type: string
+                format: url-reference
+                description: URI path of the newly created product
+        '400':
+          description: The request does not meet the requirements (Malformed request)
+          schema:
+            type: object
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              message: 
+                type: string
+              
+  /products/change/{prod_id}:
+    put:
+      tags:
+        - Product
+      summary: To make changes to one or more properties of an existing product 
+      consumes:
+        - "application/json"
+      parameters:
+        - name: prod_id
+          type: string
+          in: path
+          description: The id of the product to change the attributes of
+          required: true 
+        - name: product
+          in: body
+          description: The new properties of the product, whichever are required to be changed. Note- The id of the product cannot be changed.
+          schema:
+            $ref: "#/definitions/RequestProduct"
+      responses:
+        200:
+          description: Succesfully updated the product
+          schema:
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              id: 
+                type: number
+                description: ID of the created product
+              url:
+                type: string
+                format: url-reference
+                description: URI path of the newly created product
+        404:
+          description: Product Not Found
+
+  /products/delete/{prod_id}:
+    delete:
+      tags:
+        - Product
+      summary: To delete a product of given id
+      parameters:
+        - name: prod_id
+          type: string
+          in: path
+          description: The id of the product to change the attributes of
+          required: true 
+      responses:
+        200:
+          description: Succesfully deleted the product
+          schema:
+            type: string
+        404:
+          description: Product not found. Invalid ID
+          schema:
+            type: string
+
+  /products/createInstance/{prod_id}:
+    get:
+      tags: 
+        - Product
+      summary: "Create a new product instance and get the instance id"
+      parameters:
+        - name: prod_id
+          type: number
+          format: int64
+          minimum: 1
+          in: path
+          required: true
+          description: The ID of the product
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Getting a product object of the given id
+          schema:
+            type: object
+            properties:
+              prod_id:
+                type: number
+                format: int64
+                minimum: 1
+              instance_id:
+                type: string
+                pattern: /\d{5,}-\d{5,}/
+        '404':
+          description: The specified product ID is not found
+
+  /products/getPrice/{prod_id}:
+    get:
+      tags: 
+        - Product
+      summary: "Get the price of a product with and without taxes"
+      parameters:
+        - name: prod_id
+          type: number
+          format: int64
+          minimum: 1
+          in: path
+          required: true
+          description: The ID of the product
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Getting the detailed prices of the object
+          schema:
+            type: object
+            properties:
+              prod_id:
+                type: number
+                format: int64
+                minimum: 1
+              base_price:
+                type: number
+                format: float64
+                minimum: 0
+              taxed_price:
+                type: number
+                format: float64
+                minimum: 0
+        '404':
+          description: The specified product ID is not found
+
+  /categories/findByID/{cat_id}:
+    get:
+      tags: 
+        - Category
+      summary: "Get a category object from it ID"
+      parameters:
+        - name: cat_id
+          type: number
+          format: int64
+          minimum: 1
+          in: path
+          required: true
+          description: The ID of the category
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Getting a category object of the given id
+          schema:
+            $ref: '#/definitions/ResponseCategory'
+        '400':
+          description: The specified product ID is invalid (not a number).
+        '404':
+          description: The specified product ID is not found
+  
+  /categories/findByName:
+    get:
+      tags:
+        - Category
+      summary: "Get all the categories that match the specified name keyword"
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+          description: The keyword that can occur in the name of a category
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Getting all the categories that have the specified keyword in their name
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResponseProduct'
+        '404':
+          description: The specified keywords match no products
+
+  /categories/post:
+    post:
+      tags:
+        - Category
+      summary: Add a new category to the store listing
+      consumes:
+        - "application/json"
+      parameters:
+        - name: category
+          in: body
+          description: Category JSON object
+          required: true
+          schema:
+            $ref: "#/definitions/RequestCategory"
+
+      responses:
+        '200':
+          description: Succesfully added the category
+          schema:
+            type: object
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              id: 
+                type: number
+                description: ID of the created category
+              url:
+                type: string
+                format: url-reference
+                description: URI path of the newly created category
+        '400':
+          description: The request does not meet the requirements (Malformed request)
+          schema:
+            type: object
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              message: 
+                type: string
+              
+  /categories/change/{cat_id}:
+    put:
+      tags:
+        - Category
+      summary: To make changes to one or more properties of an existing category 
+      consumes:
+        - "application/json"
+      parameters:
+        - name: cat_id
+          type: string
+          in: path
+          description: The id of the category to change the attributes of
+          required: true 
+        - name: category
+          in: body
+          description: The new properties of the category, whichever are required to be changed. Note- The id of the category cannot be changed.
+          schema:
+            $ref: "#/definitions/RequestCategory"
+      responses:
+        200:
+          description: Succesfully updated the category
+          schema:
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              id: 
+                type: number
+                description: ID of the created category
+              url:
+                type: string
+                format: url-reference
+                description: URI path of the newly created category
+        400:
+          description: The request does not meet the requirements (Malformed request)
+          schema:
+            type: object
+            properties:
+              success: 
+                type: boolean
+                description: Result of operation
+              message: 
+                type: string
+
+  /categories/delete/{cat_id}:
+    delete:
+      tags:
+        - Category
+      summary: To delete a category of given id
+      parameters:
+        - name: cat_id
+          type: string
+          in: path
+          description: The id of the category to change the attributes of
+          required: true 
+      responses:
+        200:
+          description: Succesfully deleted the category along with the products of that category
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+              prods_arr: 
+                type: array
+                items:
+                  type: integer
+        404:
+          description: Category not found. Invalid ID
+
+
+
+definitions:
+  Product:
+    type: object
+    properties:
+      pid:
+        type: number
+        format: int64
+        minimum: 1
+      name:
+        type: string
+      brand: 
+        type: string
+      price:
+        type: number
+        format: float64
+        minimum: 0
+      category_id:
+        type: number
+        format: int64
+        minimum: 1
+      addn_data:
+        type: object
+        description: The additional properties of object like live_status, color, size etc.
+
+  RequestProduct:
+    type: object
+    allOf:
+      - $ref: "#/definitions/Product"
+    required:
+      - name
+      - brand
+      - price
+      - category_id
+      - addn_data
+  
+  ResponseProduct:
+    type: object
+    allOf:
+      - $ref: "#/definitions/Product"
+      - $ref: "#/definitions/Links"
+    required:
+      - pid
+      - name
+      - brand
+      - category_id
+      - addn_data
+  
+  Category:
+    type: object
+    properties:
+      cid: 
+        type: number
+        format: int64
+        minimum: 1
+      name:
+        type: string
+      parent_category_id:
+        type: number
+        format: int64
+        minimum: 0
+        description: The ID of the parent of this category, 0 if no parent exists.
+      child_category_ids:
+        type: array
+        items:
+          type: number
+        description: The IDs of the child categories to this category
+      tax_rate:
+        type: number
+        format: float64
+        description: Tax rate on the products of this category (Between 0 and 100%)
+        maximum: 100
+        minimum: 0
+      products:
+        type: array
+        items:
+          type: number
+        description: All the IDs of the products instantiated using the category
+
+  RequestCategory:
+    type: object
+    allOf:
+      - $ref: "#/definitions/Category"
+    required:
+      - name
+      - parent_category_id
+      - tax_rate
+  
+  ResponseCategory:
+    type: object
+    allOf:
+      - $ref: "#/definitions/Category"
+      - $ref: "#/definitions/Links"
+    required:
+      - cid
+      - name
+      - parent_category_id
+      - child_category_ids
+      - tax_rate
+      - products
+  
+  Links:
+    type: object
+    properties:
+      links:
+        type: array
+        items:
+          type: object
+          properties:
+            rel:
+              type: string
+            href:
+              type: string
+              format: url-reference
+            method:
+              type: string
+              enum:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+
