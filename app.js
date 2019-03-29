@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
 /* APIs on Products */
 
 // Get product by ID
-app.get("/products/:prod_id", (req, res) => {
+app.get("/products/findByID/:prod_id", (req, res) => {
     query_prod_id = req.params.prod_id
     temp = app.locals.store_products.find((value) => (value.pid == query_prod_id))
 
@@ -57,7 +57,7 @@ app.get("/products/:prod_id", (req, res) => {
 
 
 // Get all products that have the name
-app.get("/products/names", (req, res) => {
+app.get("/products/findByName", (req, res) => {
     name_keyword = req.query.name
     results = app.locals.store_products.filter((value) => {
         return RegExp(name_keyword, 'i').test(value.name)
@@ -71,7 +71,7 @@ app.get("/products/names", (req, res) => {
 })
 
 // Create a new product of existing category
-app.post("/products", (req, res) => {
+app.post("/products/post", (req, res) => {
     product = req.body
     category_of_product = app.locals.store_categories.find((value) => (value.cid == product.category_id))
 
@@ -99,7 +99,7 @@ app.post("/products", (req, res) => {
 })
 
 // Update an existing product
-app.put("/products/:prod_id", (req, res) => {
+app.put("/products/change/:prod_id", (req, res) => {
     original_product = app.locals.store_products.find((value) => (value.pid) == req.params.prod_id)
     new_product = req.body
     // console.log(new_product)
@@ -129,7 +129,7 @@ app.put("/products/:prod_id", (req, res) => {
 })
 
 // Delete an existing product
-app.delete("/products/:prod_id", (req, res) => {
+app.delete("/products/delete/:prod_id", (req, res) => {
     prod_index = app.locals.store_products.findIndex((value) => value.pid == req.params.prod_id)
     if (prod_index == -1) {
         res.status(404).send("Product not found.")        
@@ -140,7 +140,7 @@ app.delete("/products/:prod_id", (req, res) => {
 })
 
 // Get the base and Taxed price of a product
-app.get("/products/:prod_id/price", (req, res) => {
+app.get("/products/getPrice/:prod_id", (req, res) => {
     product = app.locals.store_products.find((value) => (value.pid == req.params.prod_id))
     if (product) {
         res.status(200).send(product.getPrice())
@@ -150,7 +150,7 @@ app.get("/products/:prod_id/price", (req, res) => {
 })
 
 // Create an instance of a product and get the SKU (Stock keeping Unit) of the instance
-app.get("/products/:prod_id/instance", (req, res) => {
+app.get("/products/createInstance/:prod_id", (req, res) => {
     product = app.locals.store_products.find((value) => (value.pid == req.params.prod_id))
     if (product) {
         instance_id = product.addProductInstance()
@@ -168,7 +168,7 @@ app.get("/products/:prod_id/instance", (req, res) => {
 /*  APIs on Categories  */
 
 // Get category by ID
-app.get("/categories/:cat_id", (req, res) => {
+app.get("/categories/findByID/:cat_id", (req, res) => {
     query_cat_id = req.params.cat_id
     temp = app.locals.store_categories.find((value) => (value.cid == query_cat_id))
 
@@ -179,7 +179,7 @@ app.get("/categories/:cat_id", (req, res) => {
 })
 
 // Get all categories that have the following names
-app.get("/categories/names", (req, res) => {
+app.get("/categories/findByName", (req, res) => {
     name_keyword = req.query.name
     results = app.locals.store_categories.filter((value) => {
         return RegExp(name_keyword, 'i').test(value.name)
@@ -193,7 +193,7 @@ app.get("/categories/names", (req, res) => {
 })
 
 // Add a new Category
-app.post("/categories/", (req, res) => {
+app.post("/categories/post/", (req, res) => {
     category = req.body
     console.log(category)
     if (!category) {
@@ -229,7 +229,7 @@ app.post("/categories/", (req, res) => {
 })
 
 // Update an existing category
-app.put("/categories/:cat_id", (req, res) => {
+app.put("/categories/change/:cat_id", (req, res) => {
     original_category = app.locals.store_categories.find((value) => (value.cid == req.params.cat_id))
     new_category = req.body
 
@@ -263,7 +263,7 @@ app.put("/categories/:cat_id", (req, res) => {
 })
 
 // Delete an existing category and delete all associated products
-app.delete("/categories/:cat_id", (req, res) => {
+app.delete("/categories/delete/:cat_id", (req, res) => {
     cat_index = app.locals.store_categories.findIndex((value) => value.cid == req.params.cat_id)
     if (cat_index == -1) {
         res.status(404).send("Category not found.")       
