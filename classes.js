@@ -19,7 +19,7 @@ class Category {
 		// if tax_rate is null category will have tax_rate of parent
 		// if the object doesn't have a tax_rate and also not a parent then default tax_rate is stored
 		this.tax_rate = tax_rate ? tax_rate : (this.parent_category ? this.parent_category.tax_rate : DEFAULT_TAXRATE)
-
+// 
 		this.products = []
 	}
 	

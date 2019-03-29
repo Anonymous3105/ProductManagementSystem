@@ -27,6 +27,7 @@ paths:
         - application/json
       responses:
         200:
+          description: "Home Page"
           schema:
             type: object
             properties:
